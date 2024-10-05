@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: my_mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} 
+      MYSQL_DATABASE: ${MYSQL_DATABASE}   
+      MYSQL_USER: ${MYSQL_USER}                
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}       
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+
+  fastapi_mysql:
+    build:
+      context: ./api_mysql
+    container_name: fastapi_mysql_app
+    ports:
+      - "8001:8001"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DB_URL: my_mysql_db
+    depends_on:
+      - mysql 
+    restart: always    
+
+volumes:
+  mysql_data:
