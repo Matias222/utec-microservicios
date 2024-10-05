@@ -13,14 +13,19 @@ def create_cliente(nombre: str, correo: str, telefono: str = None, db: Session =
     return cliente
 
 @app.get("/clientes/{id_cliente}")
-def read_cliente(id_cliente: int, db: Session = Depends(get_db)) :
+def read_cliente(id_cliente: int, db: Session = Depends(get_db)):
     cliente = db.query(Cliente).filter(Cliente.id_cliente == id_cliente).first()
     if cliente is None:
         raise HTTPException(status_code=404, detail="Cliente not found")
     return cliente
 
+@app.get("/clientes/")
+def read_clientes(db: Session = Depends(get_db)):
+    clientes = db.query(Cliente).all()
+    return clientes
+
 @app.put("/clientes/{id_cliente}")
-def update_cliente(id_cliente: int, nombre: str, correo: str, telefono: str = None, db: Session = Depends(get_db)) :
+def update_cliente(id_cliente: int, nombre: str, correo: str, telefono: str = None, db: Session = Depends(get_db)):
     cliente = db.query(Cliente).filter(Cliente.id_cliente == id_cliente).first()
     if cliente is None:
         raise HTTPException(status_code=404, detail="Cliente not found")
@@ -32,7 +37,7 @@ def update_cliente(id_cliente: int, nombre: str, correo: str, telefono: str = No
     return cliente
 
 @app.delete("/clientes/{id_cliente}")
-def delete_cliente(id_cliente: int, db: Session = Depends(get_db)) :
+def delete_cliente(id_cliente: int, db: Session = Depends(get_db)):
     cliente = db.query(Cliente).filter(Cliente.id_cliente == id_cliente).first()
     if cliente is None:
         raise HTTPException(status_code=404, detail="Cliente not found")
@@ -55,6 +60,11 @@ def read_pedido(id_pedido: int, db: Session = Depends(get_db)):
     if pedido is None:
         raise HTTPException(status_code=404, detail="Pedido not found")
     return pedido
+
+@app.get("/pedidos/")
+def read_pedidos(db: Session = Depends(get_db)):
+    pedidos = db.query(Pedido).all()
+    return pedidos
 
 @app.put("/pedidos/{id_pedido}")
 def update_pedido(id_pedido: int, id_cliente: int, fecha: str, total: float, db: Session = Depends(get_db)):
@@ -92,6 +102,11 @@ def read_detalle_pedido(id_detalle: int, db: Session = Depends(get_db)):
     if detalle is None:
         raise HTTPException(status_code=404, detail="DetallePedido not found")
     return detalle
+
+@app.get("/detalle_pedidos/")
+def read_detalle_pedidos(db: Session = Depends(get_db)):
+    detalles = db.query(DetallePedido).all()
+    return detalles
 
 @app.put("/detalle_pedidos/{id_detalle}")
 def update_detalle_pedido(id_detalle: int, id_pedido: int, id_libro: int, cantidad: int, precio_unitario: float, db: Session = Depends(get_db)):
